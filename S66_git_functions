@@ -35,3 +35,32 @@ git_root_dir() {
   fi
   return 1
 }
+
+function gda {
+
+	function git_diff_add {
+	    git diff $1
+	    read -q REPLY\?"Add to git? "
+	    if [[ ! $REPLY =~ ^[Yy]$ ]]
+	    then
+                return 1
+	    fi
+	    git add $1
+	}
+
+	function gda_all {
+	    for var in "$@"
+	    do
+                git_diff_add "$var"
+	    done
+	}
+
+	if [ $# -eq 0 ]; then
+	    OLDIFS=$IFS
+	    IFS=$'\n'
+	    gda_all `git ls-files -m`
+	    IFS=$OLDIFS
+	else
+            gda_all "$@"
+	fi
+}
