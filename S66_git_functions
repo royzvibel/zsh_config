@@ -58,7 +58,7 @@ function gda {
 	if [ $# -eq 0 ]; then
 	    OLDIFS=$IFS
 	    IFS=$'\n'
-	    gda_all `git ls-files -m`
+	    gda_all `git diff-files --name-only --diff-filter=M`
 	    IFS=$OLDIFS
 	else
             gda_all "$@"
