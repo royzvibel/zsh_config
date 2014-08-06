@@ -38,6 +38,23 @@ git_root_dir() {
 
 function gda {
 
+	function git_check_rm {
+	    echo "\n$1 deleted from git"
+	    read -q REPLY\?"rm from git? "
+	    if [[ ! $REPLY =~ ^[Yy]$ ]]
+	    then
+                return 1
+	    fi
+	    git rm $1
+	}
+
+	function gcr_all {
+	    for var in "$@"
+	    do
+               git_check_rm "$var"
+	    done
+	}
+
 	function git_diff_add {
 	    git diff $1
 	    read -q REPLY\?"Add to git? "
@@ -59,11 +76,14 @@ function gda {
 	    OLDIFS=$IFS
 	    IFS=$'\n'
 	    gda_all `git diff-files --name-only --diff-filter=M`
+	    gcr_all `git diff-files --name-only --diff-filter=D`
 	    IFS=$OLDIFS
 	else
             gda_all "$@"
 	fi
 	
+	unset -f git_check_rm
+	unset -f gcr_all
 	unset -f git_diff_add
 	unset -f gda_all
 }
