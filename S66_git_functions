@@ -63,4 +63,7 @@ function gda {
 	else
             gda_all "$@"
 	fi
+	
+	unset -f git_diff_add
+	unset -f gda_all
 }
