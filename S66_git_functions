@@ -49,9 +49,10 @@ function gda {
 	}
 
 	function gcr_all {
+		local git_base="$(git rev-parse --show-toplevel)/"
 	    for var in "$@"
 	    do
-               git_check_rm "$var"
+               git_check_rm "$git_base$var"
 	    done
 	}
 
@@ -65,6 +66,13 @@ function gda {
 	    git add $1
 	}
 
+	function gda_all_with_base {
+	    local git_base="$(git rev-parse --show-toplevel)/"
+	    for var in "$@"
+	    do
+                git_diff_add "$git_base$var"
+	    done
+	}
 	function gda_all {
 	    for var in "$@"
 	    do
@@ -75,7 +83,7 @@ function gda {
 	if [ $# -eq 0 ]; then
 	    OLDIFS=$IFS
 	    IFS=$'\n'
-	    gda_all `git diff-files --name-only --diff-filter=M`
+	    gda_all_with_base `git diff-files --name-only --diff-filter=M`
 	    gcr_all `git diff-files --name-only --diff-filter=D`
 	    IFS=$OLDIFS
 	else
@@ -86,4 +94,5 @@ function gda {
 	unset -f gcr_all
 	unset -f git_diff_add
 	unset -f gda_all
+	unset -f gda_all_with_base
 }
